@@ -1130,41 +1130,6 @@ Este projeto permitiu aplicar e consolidar conhecimentos em:
 
 ---
 
-## ⏱️ Timeline do Desenvolvimento
-
-```mermaid
-gantt
-    title Fases do Desenvolvimento
-    dateFormat  YYYY-MM-DD
-    section Planejamento
-    Análise de Requisitos           :done, req, 2024-01-01, 1d
-    Design System                   :done, des, after req, 1d
-    section Infraestrutura
-    Setup Next.js + TypeScript      :done, setup, 2024-01-03, 1d
-    Configuração Tailwind           :done, tail, after setup, 1d
-    section Componentes
-    Componentes Base                :done, comp, 2024-01-05, 2d
-    Modal e Form                    :done, form, after comp, 1d
-    section Features
-    Context API                     :done, ctx, 2024-01-08, 1d
-    Home Page                       :done, home, after ctx, 1d
-    Transactions Page               :done, trans, after home, 1d
-    section Finalização
-    Responsividade                  :done, resp, 2024-01-11, 1d
-    Documentação                    :done, docs, after resp, 2d
-    Testes e Ajustes               :done, test, after docs, 1d
-```
-
-### � Histórico de Versões
-
-| Versão     | Data     | Descrição                                            |
-| ---------- | -------- | ---------------------------------------------------- |
-| **v1.0.0** | Jan 2024 | 🎉 Versão inicial completa com todas funcionalidades |
-| **v1.1.0** | -        | 🔮 Planejado: Integração com API REST                |
-| **v1.2.0** | -        | 🔮 Planejado: Autenticação de usuários               |
-| **v2.0.0** | -        | 🔮 Planejado: Gráficos e analytics                   |
-
----
 
 ## �📄 Licença
 
