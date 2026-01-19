@@ -239,7 +239,7 @@ export default function TransactionsPage() {
                             transaction.attachments.length > 0 && (
                               <FileText
                                 className="w-4 h-4 text-gray-400"
-                                title="Possui anexos"
+                                aria-label="Possui anexos"
                               />
                             )}
                         </div>
@@ -262,7 +262,7 @@ export default function TransactionsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleEdit(transaction.id)}
                             title="Editar transação"
@@ -270,7 +270,7 @@ export default function TransactionsPage() {
                             <Pencil size={16} />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleDelete(transaction.id)}
                             className="text-danger-600 hover:text-danger-700 hover:bg-danger-50"

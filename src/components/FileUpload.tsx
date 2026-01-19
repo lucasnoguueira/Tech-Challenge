@@ -148,7 +148,7 @@ export default function FileUpload({
                   </p>
                 </div>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => removeAttachment(attachment.id)}
                   className="flex-shrink-0"
