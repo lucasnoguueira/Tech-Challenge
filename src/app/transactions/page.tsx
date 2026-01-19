@@ -262,7 +262,7 @@ export default function TransactionsPage() {
                             transaction.attachments.length > 0 && (
                               <FileText
                                 className="w-4 h-4 text-gray-400"
-                                title="Possui anexos"
+                                aria-label="Possui anexos"
                               />
                             )}
                         </div>
