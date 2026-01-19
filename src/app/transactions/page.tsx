@@ -285,7 +285,7 @@ export default function TransactionsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleEdit(transaction.id)}
                             title="Editar transação"
@@ -293,7 +293,7 @@ export default function TransactionsPage() {
                             <Pencil size={16} />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleDelete(transaction.id)}
                             className="text-danger-600 hover:text-danger-700 hover:bg-danger-50"
