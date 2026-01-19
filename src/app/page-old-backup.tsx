@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useFinancialStore } from "@/store/useFinancialStore";
+import { useFinancial } from "@/contexts/FinancialContext";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
@@ -14,31 +13,11 @@ import {
   TrendingDown,
   DollarSign,
   ArrowRight,
-  PieChart,
-  BarChart3,
-  LineChart,
 } from "lucide-react";
 import { Transaction } from "@/types";
-import { formatCurrency, formatDateTime } from "@/lib/utils";
-
-// Carregar gráficos dinamicamente (client-side only)
-const ExpensesByCategory = dynamic(
-  () => import("@/components/charts/ExpensesByCategory"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
-);
-
-const MonthlyBalance = dynamic(
-  () => import("@/components/charts/MonthlyBalance"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
-);
-
-const BalanceTrend = dynamic(
-  () => import("@/components/charts/BalanceTrend"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
-);
 
 export default function Home() {
-  const { account, transactions, addTransaction } = useFinancialStore();
+  const { account, transactions, addTransaction } = useFinancial();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Últimas 5 transações
@@ -70,6 +49,23 @@ export default function Home() {
     setIsModalOpen(false);
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(dateString));
+  };
+
   const getTransactionTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       deposito: "Depósito",
@@ -84,9 +80,9 @@ export default function Home() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Bem-vindo, {account.accountHolder}! 👋
-        </h1>
+        </h2>
         <p className="text-gray-600">
           Gerencie suas transações financeiras de forma simples e eficiente
         </p>
@@ -140,42 +136,6 @@ export default function Home() {
           </div>
         </Card>
       </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Balance Trend */}
-        <Card>
-          <div className="flex items-center gap-2 mb-4">
-            <LineChart className="w-5 h-5 text-primary-600" />
-            <h3 className="text-xl font-semibold text-gray-900">
-              Evolução do Saldo
-            </h3>
-          </div>
-          <BalanceTrend transactions={transactions} />
-        </Card>
-
-        {/* Expenses by Category */}
-        <Card>
-          <div className="flex items-center gap-2 mb-4">
-            <PieChart className="w-5 h-5 text-primary-600" />
-            <h3 className="text-xl font-semibold text-gray-900">
-              Despesas por Categoria
-            </h3>
-          </div>
-          <ExpensesByCategory transactions={transactions} />
-        </Card>
-      </div>
-
-      {/* Monthly Balance Chart */}
-      <Card>
-        <div className="flex items-center gap-2 mb-4">
-          <BarChart3 className="w-5 h-5 text-primary-600" />
-          <h3 className="text-xl font-semibold text-gray-900">
-            Receitas vs Despesas (Últimos 6 meses)
-          </h3>
-        </div>
-        <MonthlyBalance transactions={transactions} />
-      </Card>
 
       {/* Nova Transação */}
       <Card>
@@ -241,7 +201,7 @@ export default function Home() {
                     {transaction.description}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {formatDateTime(transaction.date)}
+                    {formatDate(transaction.date)}
                   </p>
                 </div>
                 <div className="text-right">

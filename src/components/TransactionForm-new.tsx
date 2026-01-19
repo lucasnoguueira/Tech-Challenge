@@ -17,7 +17,15 @@ interface TransactionFormProps {
 const categorySuggestions: Record<TransactionType, string[]> = {
   deposito: ["Salário", "Freelance", "Investimentos", "Rendimentos", "Outros"],
   transferencia: ["Entre contas", "Pagamento", "Outros"],
-  pagamento: ["Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Outros"],
+  pagamento: [
+    "Alimentação",
+    "Transporte",
+    "Moradia",
+    "Saúde",
+    "Educação",
+    "Lazer",
+    "Outros",
+  ],
   saque: ["Dinheiro", "Emergência", "Outros"],
 };
 
@@ -48,9 +56,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   // Atualizar sugestões de categoria quando o tipo ou categoria mudar
   useEffect(() => {
     const suggestions = categorySuggestions[formData.type] || [];
-    
+
     if (formData.category) {
-      const filtered = suggestions.filter(cat =>
+      const filtered = suggestions.filter((cat) =>
         cat.toLowerCase().includes(formData.category.toLowerCase())
       );
       setFilteredSuggestions(filtered);
@@ -143,22 +151,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const formatAmountPreview = () => {
     const amount = parseFloat(formData.amount);
     if (isNaN(amount)) return "";
-    
+
     const formatted = new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
 
-    return formData.type === "deposito" 
-      ? `+${formatted}` 
-      : `-${formatted}`;
+    return formData.type === "deposito" ? `+${formatted}` : `-${formatted}`;
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Tipo de Transação */}
       <div>
-        <label 
+        <label
           htmlFor="transaction-type"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
@@ -189,7 +195,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       {/* Valor */}
       <div>
-        <label 
+        <label
           htmlFor="transaction-amount"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
@@ -217,11 +223,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         </div>
         {formData.amount && !errors.amount && (
           <p id="amount-preview" className="mt-1 text-sm text-gray-500">
-            Será registrado como: <span className="font-semibold">{formatAmountPreview()}</span>
+            Será registrado como:{" "}
+            <span className="font-semibold">{formatAmountPreview()}</span>
           </p>
         )}
         {errors.amount && (
-          <p id="amount-error" className="mt-1 text-sm text-red-500" role="alert">
+          <p
+            id="amount-error"
+            className="mt-1 text-sm text-red-500"
+            role="alert"
+          >
             {errors.amount}
           </p>
         )}
@@ -229,7 +240,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       {/* Data e Hora */}
       <div>
-        <label 
+        <label
           htmlFor="transaction-date"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
@@ -256,7 +267,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       {/* Descrição */}
       <div>
-        <label 
+        <label
           htmlFor="transaction-description"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
@@ -273,11 +284,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           required
           aria-required="true"
           aria-invalid={!!errors.description}
-          aria-describedby={errors.description ? "description-error" : "description-count"}
+          aria-describedby={
+            errors.description ? "description-error" : "description-count"
+          }
         />
         <div className="flex justify-between mt-1">
           {errors.description ? (
-            <p id="description-error" className="text-sm text-red-500" role="alert">
+            <p
+              id="description-error"
+              className="text-sm text-red-500"
+              role="alert"
+            >
               {errors.description}
             </p>
           ) : (
@@ -291,7 +308,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       {/* Categoria com sugestões */}
       <div className="relative">
-        <label 
+        <label
           htmlFor="transaction-category"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
@@ -303,7 +320,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           value={formData.category}
           onChange={(e) => handleChange("category", e.target.value)}
           onFocus={() => setShowCategorySuggestions(true)}
-          onBlur={() => setTimeout(() => setShowCategorySuggestions(false), 200)}
+          onBlur={() =>
+            setTimeout(() => setShowCategorySuggestions(false), 200)
+          }
           placeholder="Ex: Alimentação"
           maxLength={50}
           className={errors.category ? "border-red-500" : ""}
@@ -313,10 +332,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           aria-controls="category-suggestions"
           aria-expanded={showCategorySuggestions}
         />
-        
+
         {/* Sugestões de categoria */}
         {showCategorySuggestions && filteredSuggestions.length > 0 && (
-          <div 
+          <div
             id="category-suggestions"
             className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto"
             role="listbox"
@@ -335,9 +354,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             ))}
           </div>
         )}
-        
+
         {errors.category && (
-          <p id="category-error" className="mt-1 text-sm text-red-500" role="alert">
+          <p
+            id="category-error"
+            className="mt-1 text-sm text-red-500"
+            role="alert"
+          >
             {errors.category}
           </p>
         )}
@@ -366,11 +389,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         >
           Cancelar
         </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          className="flex-1"
-        >
+        <Button type="submit" variant="primary" className="flex-1">
           {submitLabel}
         </Button>
       </div>

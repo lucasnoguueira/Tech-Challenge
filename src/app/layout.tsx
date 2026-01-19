@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { FinancialProvider } from "@/contexts/FinancialContext";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Gerenciamento Financeiro",
-  description: "Aplicação de gerenciamento financeiro pessoal",
+  title: "Gerenciamento Financeiro - Tech Challenge Fase 2",
+  description:
+    "Sistema completo de gestão financeira pessoal com gráficos, filtros e analytics",
+  keywords: ["finanças", "gestão financeira", "orçamento", "transações"],
 };
 
 export default function RootLayout({
@@ -18,14 +20,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
-        <FinancialProvider>
+        <Providers>
           <div className="min-h-screen bg-gray-50">
-            <header className="bg-primary-600 text-white shadow-lg">
+            <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
               <div className="container mx-auto px-4 py-6">
                 <h1 className="text-2xl font-bold">
                   💰 Gerenciamento Financeiro
                 </h1>
-                <p className="text-primary-100 text-sm mt-1">
+                <p className="text-blue-100 text-sm mt-1">
                   Controle suas finanças de forma simples e eficiente
                 </p>
               </div>
@@ -36,12 +38,13 @@ export default function RootLayout({
             <footer className="bg-gray-800 text-white mt-12">
               <div className="container mx-auto px-4 py-6 text-center">
                 <p className="text-sm">
-                  © 2024 Gerenciamento Financeiro - Tech Challenge Fase 1
+                  © 2024 Gerenciamento Financeiro - Tech Challenge Fase 2 |
+                  POSTECH
                 </p>
               </div>
             </footer>
           </div>
-        </FinancialProvider>
+        </Providers>
       </body>
     </html>
   );

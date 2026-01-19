@@ -24,18 +24,28 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 // Carregar gráficos dinamicamente (client-side only)
 const ExpensesByCategory = dynamic(
   () => import("@/components/charts/ExpensesByCategory"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 bg-gray-100 animate-pulse rounded-lg" />
+    ),
+  }
 );
 
 const MonthlyBalance = dynamic(
   () => import("@/components/charts/MonthlyBalance"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-64 bg-gray-100 animate-pulse rounded-lg" />
+    ),
+  }
 );
 
-const BalanceTrend = dynamic(
-  () => import("@/components/charts/BalanceTrend"),
-  { ssr: false, loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" /> }
-);
+const BalanceTrend = dynamic(() => import("@/components/charts/BalanceTrend"), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg" />,
+});
 
 export default function Home() {
   const { account, transactions, addTransaction } = useFinancialStore();

@@ -1,22 +1,15 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { useInView } from "react-intersection-observer";
 import { useFinancialStore } from "@/store/useFinancialStore";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionFilters from "@/components/TransactionFilters";
-import {
-  Pencil,
-  Trash2,
-  ArrowLeft,
-  RotateCcw,
-  FileText,
-  Loader2,
-} from "lucide-react";
+import Pagination from "@/components/Pagination";
+import { Pencil, Trash2, ArrowLeft, RotateCcw, FileText } from "lucide-react";
 import { Transaction } from "@/types";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 
@@ -48,16 +41,7 @@ export default function TransactionsPage() {
   const [selectedTransactionId, setSelectedTransactionId] = useState<
     string | null
   >(null);
-
-  // Infinite scroll state
-  const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // Intersection observer for infinite scroll
-  const { ref: loadMoreRef, inView } = useInView({
-    threshold: 0.5,
-    triggerOnce: false,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const selectedTransaction = selectedTransactionId
     ? getTransactionById(selectedTransactionId)
@@ -72,51 +56,44 @@ export default function TransactionsPage() {
     return Array.from(cats).sort();
   }, [transactions]);
 
-  // Visible transactions with infinite scroll
-  const visibleTransactions = filteredTransactions.slice(0, displayedCount);
-  const hasMore = displayedCount < filteredTransactions.length;
+  // Pagination
+  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedTransactions = filteredTransactions.slice(
+    startIndex,
+    endIndex
+  );
 
-  // Load more when scrolling into view
-  useEffect(() => {
-    if (inView && hasMore && !isLoadingMore) {
-      setIsLoadingMore(true);
-      // Simulate loading delay for better UX
-      setTimeout(() => {
-        setDisplayedCount((prev) =>
-          Math.min(prev + ITEMS_PER_PAGE, filteredTransactions.length)
-        );
-        setIsLoadingMore(false);
-      }, 500);
-    }
-  }, [inView, hasMore, isLoadingMore, filteredTransactions.length]);
-
-  // Reset displayed count when filters change
-  useEffect(() => {
-    setDisplayedCount(ITEMS_PER_PAGE);
-  }, [searchTerm, filterType, filterCategory, sortBy, sortOrder]);
-
+  // Reset to page 1 when filters change
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1);
   };
 
   const handleFilterTypeChange = (type: string | null) => {
     setFilterType(type);
+    setCurrentPage(1);
   };
 
   const handleFilterCategoryChange = (category: string | null) => {
     setFilterCategory(category);
+    setCurrentPage(1);
   };
 
   const handleSortByChange = (newSortBy: "date" | "amount") => {
     setSortBy(newSortBy);
+    setCurrentPage(1);
   };
 
   const handleSortOrderChange = (order: "asc" | "desc") => {
     setSortOrder(order);
+    setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
     resetFilters();
+    setCurrentPage(1);
   };
 
   const handleEdit = (id: string) => {
@@ -242,7 +219,7 @@ export default function TransactionsPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {visibleTransactions.map((transaction) => (
+                  {paginatedTransactions.map((transaction) => (
                     <tr
                       key={transaction.id}
                       className="hover:bg-gray-50 transition-colors"
@@ -311,7 +288,7 @@ export default function TransactionsPage() {
 
             {/* Mobile Card View */}
             <div className="md:hidden divide-y divide-gray-200">
-              {visibleTransactions.map((transaction) => (
+              {paginatedTransactions.map((transaction) => (
                 <div key={transaction.id} className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -371,94 +348,14 @@ export default function TransactionsPage() {
               ))}
             </div>
 
-            {/* Loading indicator and infinite scroll trigger */}
-            {hasMore && (
-              <div
-                ref={loadMoreRef}
-                className="py-8 flex justify-center items-center"
-              >
-                {isLoadingMore ? (
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-sm">
-                      Carregando mais transações...
-                    </span>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">
-                    Scroll para carregar mais
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Skeleton loading for new items */}
-            {isLoadingMore && (
-              <>
-                {/* Desktop skeleton */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full">
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {[1, 2, 3].map((i) => (
-                        <tr key={`skeleton-${i}`} className="animate-pulse">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="h-4 bg-gray-200 rounded w-24"></div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="h-6 bg-gray-200 rounded w-16"></div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="h-4 bg-gray-200 rounded w-48"></div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="h-4 bg-gray-200 rounded w-20"></div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="h-8 bg-gray-200 rounded w-20 ml-auto"></div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile skeleton */}
-                <div className="md:hidden divide-y divide-gray-200">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={`skeleton-mobile-${i}`}
-                      className="p-4 animate-pulse"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="h-6 bg-gray-200 rounded w-16 mb-2"></div>
-                          <div className="h-5 bg-gray-200 rounded w-40 mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-24"></div>
-                        </div>
-                        <div className="h-6 bg-gray-200 rounded w-20"></div>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="h-9 bg-gray-200 rounded flex-1"></div>
-                        <div className="h-9 bg-gray-200 rounded flex-1"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* End of list message */}
-            {!hasMore && visibleTransactions.length > 0 && (
-              <div className="py-8 text-center">
-                <p className="text-sm text-gray-500">
-                  Todas as {filteredTransactions.length} transações foram
-                  carregadas
-                </p>
-              </div>
-            )}
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={filteredTransactions.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+            />
           </>
         )}
       </Card>
